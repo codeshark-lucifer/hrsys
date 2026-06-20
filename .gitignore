@@ -1,0 +1,50 @@
+# Build output
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# .NET
+*.nupkg
+*.snupkg
+project.lock.json
+artifacts/
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Rider / JetBrains
+.idea/
+
+# VS Code
+.vscode/
+
+# Local environment and secrets
+.env
+.env.*
+*.local
+appsettings.Development.json
+appsettings.*.local.json
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.cache
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
