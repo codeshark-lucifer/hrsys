@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
@@ -159,7 +159,7 @@ namespace HRSYSTEM
                 try
                 {
                     c.Open();
-                    string query = @"SELECT e.id AS `ID`, e.first_name AS `First Name`, e.last_name AS `Last Name`, 
+                    string query = @"SELECT e.id AS `ID`, e.employee_code AS `Employee Code`, e.first_name AS `First Name`, e.last_name AS `Last Name`, 
                                             e.email AS `Email`, e.phone AS `Phone`, e.hire_date AS `Hire Date`, 
                                             d.name AS `Department`, e.status AS `Status`, e.department_id
                                      FROM employees e LEFT JOIN departments d ON e.department_id = d.id ORDER BY e.id DESC";
@@ -185,9 +185,30 @@ namespace HRSYSTEM
                 try
                 {
                     c.Open();
-                    string sql = "INSERT INTO employees (first_name, last_name, email, phone, hire_date, department_id, status) VALUES (@f, @l, @e, @p, @h, @d, @s)";
+
+                    // Generate next employee code (format: EMP_xxx)
+                    string employeeCode = "EMP_001";
+                    string codeQuery = "SELECT employee_code FROM employees ORDER BY id DESC LIMIT 1";
+                    using (MySqlCommand codeCmd = new MySqlCommand(codeQuery, c))
+                    {
+                        object result = codeCmd.ExecuteScalar();
+                        if (result != null && result != DBNull.Value)
+                        {
+                            string lastCode = result.ToString();
+                            if (lastCode.StartsWith("EMP_"))
+                            {
+                                if (int.TryParse(lastCode.Substring(4), out int lastNum))
+                                {
+                                    employeeCode = "EMP_" + (lastNum + 1).ToString("D3");
+                                }
+                            }
+                        }
+                    }
+
+                    string sql = "INSERT INTO employees (employee_code, first_name, last_name, email, phone, hire_date, department_id, status) VALUES (@code, @f, @l, @e, @p, @h, @d, @s)";
                     using (MySqlCommand cmd = new MySqlCommand(sql, c))
                     {
+                        cmd.Parameters.AddWithValue("@code", employeeCode);
                         cmd.Parameters.AddWithValue("@f", txtFirstName.Text.Trim());
                         cmd.Parameters.AddWithValue("@l", txtLastName.Text.Trim());
                         cmd.Parameters.AddWithValue("@e", txtEmail.Text.Trim());
